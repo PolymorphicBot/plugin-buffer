@@ -1,0 +1,6 @@
+name: buffer
+version: 1.0.0
+description: Buffer Plugin for PolymorphicBot
+dependencies:
+  polymorphic_bot:
+    git: git://github.com/PolymorphicBot/PolymorphicBot.git
