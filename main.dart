@@ -1,14 +1,11 @@
 import "package:polymorphic_bot/api.dart";
 
 BotConnector bot;
-EventManager eventManager;
 
-void main(_, port) {
-  bot = new BotConnector(port);
-  eventManager = bot.createEventManager();
+void main(_, Plugin plugin) {
+  bot = plugin.getBot();
 
-
-  eventManager.on("message").listen((event) {
+  bot.on("message").listen((event) {
     Buffer.handle(event);
   });
 
