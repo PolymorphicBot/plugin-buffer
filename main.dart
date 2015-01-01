@@ -1,17 +1,15 @@
 import "package:polymorphic_bot/api.dart";
 
 BotConnector bot;
+Plugin plugin;
 
-void main(_, Plugin plugin) {
+void main(_, Plugin myPlugin) {
+  plugin = myPlugin;
   bot = plugin.getBot();
 
-  bot.on("message").listen((event) {
-    Buffer.handle(event);
-  });
+  bot.onMessage((event) => Buffer.handle(event));
 
-  RequestAdapter requests = new RequestAdapter();
-
-  requests.register("channel-buffer", (request) {
+  plugin.addRemoteMethod("channel-buffer", (request) {
     String network = request.data['network'];
     String channel = request.data['channel'];
 
@@ -22,14 +20,16 @@ void main(_, Plugin plugin) {
     });
   });
 
-  requests.register("add-to-buffer", (request) {
-    Buffer.handle(request.data);
+  plugin.addRemoteMethod("add-to-buffer", (request) {
+    String network = request.data['network'];
+    String target = request.data['target'];
+    String message = request.data['message'];
+    String user = request.data['from'];
+    Buffer.handle(new MessageEvent(bot, network, target, user, false, message));
     request.reply({
       "added": true
     });
   });
-
-  bot.handleRequest(requests.handle);
 }
 
 class BufferEntry {
@@ -55,6 +55,8 @@ class BufferEntry {
     "from": user,
     "message": message
   };
+  
+  MessageEvent toEvent() => new MessageEvent(bot, network, target, user, false, message);
 }
 
 class Buffer {
@@ -73,11 +75,11 @@ class Buffer {
     _tracker++;
   }
 
-  static void handle(Map<String, dynamic> data) {
-    String network = data['network'];
-    String target = data['target'];
-    String message = data['message'];
-    String user = data['from'];
+  static void handle(MessageEvent event) {
+    String network = event.network;
+    String target = event.target;
+    String message = event.message;
+    String user = event.from;
 
     var buf = buffers["${network}${target}"];
 
