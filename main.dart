@@ -9,26 +9,24 @@ void main(_, Plugin myPlugin) {
 
   bot.onMessage((event) => Buffer.handle(event));
 
-  plugin.addRemoteMethod("channel-buffer", (request) {
-    String network = request.data['network'];
-    String channel = request.data['channel'];
+  plugin.addRemoteMethod("getChannelBuffer", (call) {
+    String network = call.getArgument("network");
+    String channel = call.getArgument("channel");
 
     var buffers = Buffer.get("${network}${channel}");
 
-    request.reply({
-      "entries": buffers.map((entry) => entry.toData()).toList()
-    });
+    call.reply(buffers.map((entry) => entry.toData()).toList());
   });
 
-  plugin.addRemoteMethod("add-to-buffer", (request) {
-    String network = request.data['network'];
-    String target = request.data['target'];
-    String message = request.data['message'];
-    String user = request.data['from'];
+  plugin.addRemoteMethod("addToBuffer", (call) {
+    String network = call.getArgument("network");
+    String target = call.getArgument("target");
+    String message = call.getArgument("message");
+    String user = call.getArgument("from");
+    
     Buffer.handle(new MessageEvent(bot, network, target, user, false, message));
-    request.reply({
-      "added": true
-    });
+    
+    call.reply(true);
   });
 }
 
