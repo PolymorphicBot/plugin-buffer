@@ -3,8 +3,8 @@ import "package:polymorphic_bot/api.dart";
 BotConnector bot;
 Plugin plugin;
 
-void main(_, Plugin myPlugin) {
-  plugin = myPlugin;
+void main(args, port) {
+  plugin = polymorphic(args, port);
   bot = plugin.getBot();
 
   bot.onMessage((event) => Buffer.handle(event));
