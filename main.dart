@@ -24,7 +24,7 @@ void main(args, port) {
     String message = call.getArgument("message");
     String user = call.getArgument("from");
     
-    Buffer.handle(new MessageEvent(bot, network, target, user, false, message));
+    Buffer.handle(new MessageEvent(bot, network, target, user, false, false, message));
     
     call.reply(true);
   });
@@ -54,7 +54,7 @@ class BufferEntry {
     "message": message
   };
   
-  MessageEvent toEvent() => new MessageEvent(bot, network, target, user, false, message);
+  MessageEvent toEvent() => new MessageEvent(bot, network, target, user, false, false, message);
 }
 
 class Buffer {
